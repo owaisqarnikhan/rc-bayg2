@@ -1,9 +1,9 @@
 -- Database Setup Script for BAYG E-commerce Platform
 -- AWS EC2 Ubuntu Server: 3.136.95.83
 
--- Create database and user
-CREATE DATABASE IF NOT EXISTS bayg_production;
-CREATE USER IF NOT EXISTS bayg_user WITH ENCRYPTED PASSWORD 'BaygSecure2024!';
+-- Create database and user (PostgreSQL syntax)
+CREATE DATABASE bayg_production;
+CREATE USER bayg_user WITH ENCRYPTED PASSWORD 'BaygSecure2024!';
 
 -- Grant privileges
 GRANT ALL PRIVILEGES ON DATABASE bayg_production TO bayg_user;

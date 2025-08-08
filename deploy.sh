@@ -70,10 +70,12 @@ cd /home/ubuntu/bayg-ecommerce
 
 # Create environment file
 print_status "Creating environment configuration..."
-cat > .env << 'EOF'
+# Generate session secret
+SESSION_SECRET=$(openssl rand -base64 32)
+cat > .env << EOF
 NODE_ENV=production
 DATABASE_URL=postgresql://bayg_user:BaygSecure2024!@localhost:5432/bayg_production
-SESSION_SECRET=$(openssl rand -base64 32)
+SESSION_SECRET=$SESSION_SECRET
 COOKIE_DOMAIN=3.136.95.83
 COOKIE_SECURE=false
 COOKIE_SAME_SITE=lax

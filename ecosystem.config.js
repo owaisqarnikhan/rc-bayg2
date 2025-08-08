@@ -4,8 +4,8 @@ module.exports = {
     script: 'npm',
     args: 'start',
     cwd: '/home/ubuntu/bayg-ecommerce',
-    instances: 'max',
-    exec_mode: 'cluster',
+    instances: 1,
+    exec_mode: 'fork',
     env: {
       NODE_ENV: 'production',
       PORT: 5000

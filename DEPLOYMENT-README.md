@@ -69,6 +69,79 @@ sudo systemctl restart nginx
 sudo tail -f /var/log/nginx/error.log
 ```
 
+## 🚨 Troubleshooting Common Issues
+
+### Issue 1: PostgreSQL Authentication Failed
+**Error:** `password authentication failed for user "bayg_user"`
+
+**Solution:** Run the deployment fix script:
+```bash
+cd /home/ubuntu/bayg-ecommerce
+chmod +x fix-deployment.sh
+./fix-deployment.sh
+```
+
+This will:
+- Drop and recreate the database user with correct permissions
+- Fix the DATABASE_URL in environment file
+- Test database connection
+- Restart the application
+
+### Issue 2: PM2 Configuration Error
+**Error:** `File ecosystem.config.js malformated` or `module is not defined`
+
+**Solution:** The ecosystem.config.js has been updated to use proper CommonJS syntax. If you still see this error:
+```bash
+pm2 delete all
+pm2 start ecosystem.config.js --env production
+```
+
+### Issue 3: DATABASE_URL Not Set
+**Error:** `DATABASE_URL must be set. Did you forget to provision a database?`
+
+**Solution:** 
+1. Check if .env file exists: `ls -la .env`
+2. If missing, run: `./fix-deployment.sh`
+3. Verify environment variables: `cat .env`
+
+### Issue 4: Database Connection Issues
+**Test database connection manually:**
+```bash
+# Test with psql
+psql postgresql://bayg_user:BaygSecure2024!@localhost:5432/bayg_production
+
+# Test with node
+node -e "
+const { Pool } = require('pg');
+const pool = new Pool({ connectionString: 'postgresql://bayg_user:BaygSecure2024!@localhost:5432/bayg_production' });
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) console.error('Error:', err.message);
+  else console.log('Success:', res.rows[0]);
+  pool.end();
+});
+"
+```
+
+### Issue 5: Application Not Responding
+**Check these steps:**
+```bash
+# 1. Check PM2 status
+pm2 status
+
+# 2. Check application logs
+pm2 logs bayg-ecommerce --lines 50
+
+# 3. Check if port is in use
+netstat -tlnp | grep :5000
+
+# 4. Test direct connection
+curl http://localhost:5000
+
+# 5. Restart everything
+pm2 restart bayg-ecommerce
+sudo systemctl restart nginx
+```
+
 ## 📊 System Services Status
 
 ```bash
