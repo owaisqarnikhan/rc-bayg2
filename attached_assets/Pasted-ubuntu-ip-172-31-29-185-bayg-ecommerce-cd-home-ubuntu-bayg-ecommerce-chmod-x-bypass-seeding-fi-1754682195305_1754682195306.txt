@@ -1,0 +1,119 @@
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ cd /home/ubuntu/bayg-ecommerce
+chmod +x bypass-seeding-fix.sh
+./bypass-seeding-fix.sh
+🔧 Bypassing seeding issue and starting application...
+[PM2] Applying action stopProcessId on app [all](ids: [ 0 ])
+[PM2] [all](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 2    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [bayg-ecommerce](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][WARN] No process found
+[PM2] [v] All Applications Stopped
+[PM2] [v] PM2 Daemon Stopped
+Creating modified server entry point...
+Starting simplified application...
+[PM2] Spawning PM2 daemon with pm2_home=/home/ubuntu/.pm2
+[PM2] PM2 Successfully daemonized
+[PM2][WARN] Applications bayg-ecommerce not running, starting...
+[PM2][WARN] Environment [production] is not defined in process file
+[PM2] App [bayg-ecommerce] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ online    │ 0%       │ 27.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+Testing application...
+✅ Application is running on port 5000!
+Configuring Nginx...
+2025/08/08 19:38:45 [warn] 60217#60217: conflicting server name "_" on 0.0.0.0:80, ignored
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+✅ Application accessible at: http://3.136.95.83
+[PM2] Saving current process list...
+[PM2] Successfully saved in /home/ubuntu/.pm2/dump.pm2
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ online    │ 0%       │ 50.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+
+🎉 Application is now running!
+✅ Local: http://localhost:5000
+✅ Public: http://3.136.95.83
+
+Health check: curl http://3.136.95.83/api/health
+./bypass-seeding-fix.sh: line 152: EOF: command not found
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ chmod +x fix-full-application.sh
+./fix-full-application.sh
+?? Fixing full application with API routes...
+[PM2] Applying action stopProcessId on app [all](ids: [ 0 ])
+[PM2] [bayg-ecommerce](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [bayg-ecommerce](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+Creating fixed server entry point...
+Starting full application with API routes...
+[PM2][WARN] Applications bayg-ecommerce not running, starting...
+[PM2] App [bayg-ecommerce] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ online    │ 0%       │ 22.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+Testing application endpoints...
+? Health endpoint not responding
+? Frontend not serving
+
+PM2 Status:
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ online    │ 0%       │ 48.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+
+Recent logs:
+[TAILING] Tailing last 10 lines for [bayg-ecommerce] process (change the value with --lines option)
+/home/ubuntu/bayg-ecommerce/logs/out-0.log last 10 lines:
+0|bayg-eco | 2025-08-08T19:42:27: ?? Testing database connection...
+0|bayg-eco | 2025-08-08T19:42:32: ?? Retrying server start in 5 seconds...
+0|bayg-eco | 2025-08-08T19:42:32: ?? Starting BAYG E-commerce Platform...
+0|bayg-eco | 2025-08-08T19:42:32: ?? Testing database connection...
+0|bayg-eco | 2025-08-08T19:42:37: ?? Retrying server start in 5 seconds...
+0|bayg-eco | 2025-08-08T19:42:37: ?? Starting BAYG E-commerce Platform...
+0|bayg-eco | 2025-08-08T19:42:37: ?? Testing database connection...
+0|bayg-eco | 2025-08-08T19:42:42: ?? Retrying server start in 5 seconds...
+0|bayg-eco | 2025-08-08T19:42:42: ?? Starting BAYG E-commerce Platform...
+0|bayg-eco | 2025-08-08T19:42:42: ?? Testing database connection...
+
+/home/ubuntu/bayg-ecommerce/logs/err-0.log last 10 lines:
+0|bayg-eco | 2025-08-08T19:42:42:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+0|bayg-eco | 2025-08-08T19:42:42:     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+0|bayg-eco | 2025-08-08T19:42:42:     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+0|bayg-eco | 2025-08-08T19:42:42:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+0|bayg-eco | 2025-08-08T19:42:42:     at ModuleLoader.import (node:internal/modules/esm/loader:539:34)
+0|bayg-eco | 2025-08-08T19:42:42:     at defaultImportModuleDynamicallyForModule (node:internal/modules/esm/utils:221:31)
+0|bayg-eco | 2025-08-08T19:42:42:     at importModuleDynamicallyCallback (node:internal/modules/esm/utils:260:12) {
+0|bayg-eco | 2025-08-08T19:42:42:   code: 'ERR_MODULE_NOT_FOUND',
+0|bayg-eco | 2025-08-08T19:42:42:   url: 'file:///home/ubuntu/bayg-ecommerce/server/db.js'
+0|bayg-eco | 2025-08-08T19:42:42: }
+
+
+? Application may have issues. Check logs with: pm2 logs bayg-ecommerce
+[PM2] Saving current process list...
+[PM2] Successfully saved in /home/ubuntu/.pm2/dump.pm2
+./fix-full-application.sh: line 239: EOF: command not found
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$
