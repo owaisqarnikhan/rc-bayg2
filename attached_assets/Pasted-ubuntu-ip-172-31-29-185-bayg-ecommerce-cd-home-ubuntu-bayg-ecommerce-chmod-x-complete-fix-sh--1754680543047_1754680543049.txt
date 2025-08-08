@@ -1,0 +1,44 @@
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ cd /home/ubuntu/bayg-ecommerce
+chmod +x complete-fix.sh
+./complete-fix.sh
+🔧 Complete BAYG E-commerce Platform Fix...
+[INFO] Stopping all processes...
+[PM2][WARN] No process found
+[PM2][WARN] No process found
+[INFO] Completely fixing PostgreSQL database...
+dropdb: error: query failed: FATAL:  terminating connection due to administrator command
+server closed the connection unexpectedly
+        This probably means the server terminated abnormally
+        before or while processing the request.
+dropdb: detail: Query was: SELECT pg_catalog.set_config('search_path', '', false);
+dropuser: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+        Is the server running locally and accepting connections on that socket?
+ERROR:  role "bayg_user" already exists
+ERROR:  database "bayg_production" already exists
+ALTER ROLE
+GRANT
+You are now connected to database "bayg_production" as user "postgres".
+GRANT
+ALTER SCHEMA
+ALTER DEFAULT PRIVILEGES
+ALTER DEFAULT PRIVILEGES
+NOTICE:  extension "uuid-ossp" already exists, skipping
+CREATE EXTENSION
+          status
+---------------------------
+ Database setup completed!
+(1 row)
+
+[INFO] Database recreated successfully!
+[INFO] Testing database connection...
+ current_user | current_database
+--------------+------------------
+ postgres     | bayg_production
+(1 row)
+
+psql: error: connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user "bayg_user"
+connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user "bayg_user"
+[ERROR] Database connection still failing. Fixing pg_hba.conf...
+psql: error: connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user "bayg_user"
+connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user "bayg_user"
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$
