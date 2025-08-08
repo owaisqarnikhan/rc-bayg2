@@ -1,0 +1,70 @@
+# QUICK POSTGRESQL COMMANDS FOR BAYG DATABASE
+
+## Basic Connection
+psql -d "$DATABASE_URL"
+
+## User Management
+# Show all users with roles
+psql -d "$DATABASE_URL" -c "SELECT u.username, u.email, u.is_admin, u.is_super_admin, r.name as role FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.username;"
+
+# Show specific user
+psql -d "$DATABASE_URL" -c "SELECT * FROM users WHERE username = 'admin';"
+
+# Count users by role  
+psql -d "$DATABASE_URL" -c "SELECT r.name as role, COUNT(u.id) as count FROM users u LEFT JOIN roles r ON u.role_id = r.id GROUP BY r.name;"
+
+# Show user permissions (for admin)
+psql -d "$DATABASE_URL" -c "SELECT p.name FROM users u JOIN roles r ON u.role_id = r.id JOIN role_permissions rp ON r.id = rp.role_id JOIN permissions p ON rp.permission_id = p.id WHERE u.username = 'admin' ORDER BY p.name;"
+
+## User Modifications
+# Make user superadmin
+psql -d "$DATABASE_URL" -c "UPDATE users SET is_admin = true, is_super_admin = true, role_id = (SELECT id FROM roles WHERE name = 'super_admin') WHERE username = 'username_here';"
+
+# Make user manager
+psql -d "$DATABASE_URL" -c "UPDATE users SET is_admin = true, role_id = (SELECT id FROM roles WHERE name = 'manager') WHERE username = 'username_here';"
+
+# Make user regular user
+psql -d "$DATABASE_URL" -c "UPDATE users SET is_admin = false, is_super_admin = false, role_id = (SELECT id FROM roles WHERE name = 'user') WHERE username = 'username_here';"
+
+## Database Structure
+# List all tables
+psql -d "$DATABASE_URL" -c "\dt"
+
+# Describe users table
+psql -d "$DATABASE_URL" -c "\d users"
+
+# Describe products table  
+psql -d "$DATABASE_URL" -c "\d products"
+
+## Business Data
+# Show all products
+psql -d "$DATABASE_URL" -c "SELECT p.name, p.price, p.stock_quantity, c.name as category FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.name;"
+
+# Show recent orders
+psql -d "$DATABASE_URL" -c "SELECT o.id, u.username, o.total_amount, o.status, o.created_at FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC LIMIT 10;"
+
+# Show orders by status
+psql -d "$DATABASE_URL" -c "SELECT status, COUNT(*) as count FROM orders GROUP BY status;"
+
+## Permissions
+# Show all permissions
+psql -d "$DATABASE_URL" -c "SELECT pm.name as module, p.name as permission FROM permissions p JOIN permission_modules pm ON p.module_id = pm.id ORDER BY pm.name, p.name;"
+
+# Show role permissions count
+psql -d "$DATABASE_URL" -c "SELECT r.name as role, COUNT(rp.permission_id) as permissions FROM roles r LEFT JOIN role_permissions rp ON r.id = rp.role_id GROUP BY r.name;"
+
+# Grant all permissions to super_admin role
+psql -d "$DATABASE_URL" -c "INSERT INTO role_permissions (role_id, permission_id) SELECT (SELECT id FROM roles WHERE name = 'super_admin'), id FROM permissions ON CONFLICT DO NOTHING;"
+
+## Quick System Status
+psql -d "$DATABASE_URL" -c "SELECT 'Users' as table_name, COUNT(*) as count FROM users UNION ALL SELECT 'Products', COUNT(*) FROM products UNION ALL SELECT 'Orders', COUNT(*) FROM orders UNION ALL SELECT 'Categories', COUNT(*) FROM categories;"
+
+## Database Maintenance
+# Backup database
+pg_dump "$DATABASE_URL" > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Check database size
+psql -d "$DATABASE_URL" -c "SELECT pg_size_pretty(pg_database_size(current_database()));"
+
+# Vacuum and analyze
+psql -d "$DATABASE_URL" -c "VACUUM ANALYZE;"
