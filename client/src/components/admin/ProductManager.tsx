@@ -75,6 +75,8 @@ export function ProductManager() {
       const cleanData = {
         ...data,
         price: data.price || "0",
+        // Remove categoryId if it's empty to avoid foreign key constraint
+        categoryId: data.categoryId && data.categoryId.trim() !== "" ? data.categoryId : undefined,
       };
       const response = await apiRequest("/api/products", "POST", cleanData);
       return response.json();
