@@ -1,0 +1,149 @@
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ chmod +x fix-deployment.sh
+./fix-deployment.sh
+🔧 Fixing BAYG E-commerce Platform Deployment Issues...
+[INFO] Stopping existing processes...
+[PM2] Applying action stopProcessId on app [all](ids: [
+  0, 1, 2, 3, 4,
+  5, 6, 7, 8, 9
+])
+[PM2] [all](0) ✓
+[PM2] [all](1) ✓
+[PM2] [all](2) ✓
+[PM2] [all](3) ✓
+[PM2] [all](5) ✓
+[PM2] [all](6) ✓
+[PM2] [all](7) ✓
+[PM2] [bayg-app](4) ✓
+[PM2] [bayg](8) ✓
+[PM2] [bayg](9) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 6  │ bayg               │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+│ 7  │ bayg               │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+│ 8  │ bayg               │ fork     │ 1139 │ stopped   │ 0%       │ 0b       │
+│ 9  │ bayg               │ fork     │ 1138 │ stopped   │ 0%       │ 0b       │
+│ 4  │ bayg-app           │ cluster  │ 2432 │ stopped   │ 0%       │ 0b       │
+│ 5  │ bayg-ecommerce     │ cluster  │ 9    │ stopped   │ 0%       │ 0b       │
+│ 0  │ ratecard-app       │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+│ 1  │ ratecard-app       │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+│ 2  │ ratecard-app       │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+│ 3  │ ratecard-app       │ fork     │ 0    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [all](ids: [
+  0, 1, 2, 3, 4,
+  5, 6, 7, 8, 9
+])
+[PM2] [ratecard-app](0) ✓
+[PM2] [ratecard-app](1) ✓
+[PM2] [ratecard-app](2) ✓
+[PM2] [ratecard-app](3) ✓
+[PM2] [bayg-app](4) ✓
+[PM2] [bayg-ecommerce](5) ✓
+[PM2] [bayg](6) ✓
+[PM2] [bayg](7) ✓
+[PM2] [bayg](8) ✓
+[PM2] [bayg](9) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[INFO] Fixing PostgreSQL database setup...
+DROP DATABASE
+ERROR:  role "bayg_user" cannot be dropped because some objects depend on it
+DETAIL:  owner of schema public
+privileges for default privileges on new relations belonging to role postgres in schema public
+privileges for default privileges on new sequences belonging to role postgres in schema public
+CREATE DATABASE
+ERROR:  role "bayg_user" already exists
+GRANT
+ALTER DATABASE
+You are now connected to database "bayg_production" as user "postgres".
+GRANT
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+ALTER DEFAULT PRIVILEGES
+CREATE EXTENSION
+[INFO] Database setup completed successfully!
+[INFO] Fixing environment configuration...
+[INFO] Environment file updated successfully!
+[INFO] Testing database connection...
+Database connection failed: password authentication failed for user "bayg_user"
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ pm2 start
+[PM2][ERROR] File ecosystem.config.js malformated
+ReferenceError: module is not defined
+    at file:///home/ubuntu/bayg-ecommerce/ecosystem.config.js:1:1
+    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
+    at Module._compile (node:internal/modules/cjs/loader:1511:5)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ ^C
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ # On your AWS server:
+cd /home/ubuntu/bayg-ecommerce
+pm2 start ecosystem.config.cjs --env production
+[PM2][WARN] Applications bayg-ecommerce not running, starting...
+[PM2] App [bayg-ecommerce] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 0    │ online    │ 0%       │ 28.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ # On your server:
+cd /home/ubuntu/bayg-ecommerce
+chmod +x fix-deployment.sh
+./fix-deployment.sh
+?? Fixing BAYG E-commerce Platform Deployment Issues...
+[INFO] Stopping existing processes...
+[PM2] Applying action stopProcessId on app [all](ids: [ 0 ])
+[PM2] [all](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ bayg-ecommerce     │ fork     │ 9    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [bayg-ecommerce](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[INFO] Fixing PostgreSQL database setup...
+DROP DATABASE
+ERROR:  role "bayg_user" cannot be dropped because some objects depend on it
+DETAIL:  owner of schema public
+privileges for default privileges on new relations belonging to role postgres in schema public
+privileges for default privileges on new sequences belonging to role postgres in schema public
+CREATE DATABASE
+ERROR:  role "bayg_user" already exists
+GRANT
+ALTER DATABASE
+You are now connected to database "bayg_production" as user "postgres".
+GRANT
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+ALTER DEFAULT PRIVILEGES
+CREATE EXTENSION
+[INFO] Database setup completed successfully!
+[INFO] Fixing environment configuration...
+[INFO] Environment file updated successfully!
+[INFO] Testing database connection...
+Database connection failed: password authentication failed for user "bayg_user"
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$ pm2 start
+[PM2][ERROR] File ecosystem.config.js malformated
+ReferenceError: module is not defined
+    at file:///home/ubuntu/bayg-ecommerce/ecosystem.config.js:1:1
+    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
+    at Module._compile (node:internal/modules/cjs/loader:1511:5)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+ubuntu@ip-172-31-29-185:~/bayg-ecommerce$
