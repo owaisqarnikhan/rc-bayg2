@@ -21,7 +21,18 @@ export function usePermissions() {
   const permissions = data?.permissions || [];
 
   const hasPermission = (permission: string): boolean => {
-    return permissions.includes(permission);
+    // First check if permissions list contains the permission
+    if (permissions.includes(permission)) {
+      return true;
+    }
+    
+    // Super admin bypass - if user has "all" permissions or is explicitly marked as super admin
+    // This handles cases where superadmin permissions might not be individually listed
+    if (permissions.includes("*") || permissions.includes("all")) {
+      return true;
+    }
+    
+    return false;
   };
 
   const hasAnyPermission = (permissionList: string[]): boolean => {

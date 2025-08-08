@@ -48,6 +48,11 @@ export default function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
     queryKey: ["/api/admin/stats"],
   });
+  
+  // Helper function to check permissions with superadmin override
+  const canAccess = (permission: string): boolean => {
+    return (user as any)?.isSuperAdmin || hasPermission(permission);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -226,42 +231,42 @@ export default function AdminDashboard() {
         <Tabs defaultValue="approvals" className="space-y-6">
           <div className="overflow-x-auto">
             <TabsList className="inline-flex h-auto w-auto min-w-full p-1 bg-muted rounded-md justify-start md:justify-center flex-nowrap md:flex-wrap gap-1">
-            {hasPermission("orders.approve") && (
+            {canAccess("orders.approve") && (
               <TabsTrigger value="approvals" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Approvals</span>
                 <span className="xs:hidden">App</span>
               </TabsTrigger>
             )}
-            {hasPermission("orders.view") && (
+            {canAccess("orders.view") && (
               <TabsTrigger value="orders" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <ShoppingBag className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Orders</span>
                 <span className="xs:hidden">Ord</span>
               </TabsTrigger>
             )}
-            {hasPermission("categories.view") && (
+            {canAccess("categories.view") && (
               <TabsTrigger value="categories" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Categories</span>
                 <span className="xs:hidden">Cat</span>
               </TabsTrigger>
             )}
-            {hasPermission("products.view") && (
+            {canAccess("products.view") && (
               <TabsTrigger value="products" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <Package className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Products</span>
                 <span className="xs:hidden">Prod</span>
               </TabsTrigger>
             )}
-            {hasPermission("slider.view") && (
+            {canAccess("slider.view") && (
               <TabsTrigger value="slider" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <FileSpreadsheet className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Slider</span>
                 <span className="xs:hidden">Sld</span>
               </TabsTrigger>
             )}
-            {hasPermission("users.view") && (
+            {canAccess("users.view") && (
               <TabsTrigger value="users" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Users</span>
@@ -275,28 +280,28 @@ export default function AdminDashboard() {
                 <span className="xs:hidden">Rol</span>
               </TabsTrigger>
             )}
-            {hasPermission("database.export") && (
+            {canAccess("database.export") && (
               <TabsTrigger value="excel" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <FileSpreadsheet className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Excel</span>
                 <span className="xs:hidden">Exc</span>
               </TabsTrigger>
             )}
-            {hasPermission("database.export") && (
+            {canAccess("database.export") && (
               <TabsTrigger value="database" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <FileSpreadsheet className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Database</span>
                 <span className="xs:hidden">DB</span>
               </TabsTrigger>
             )}
-            {hasPermission("units.view") && (
+            {canAccess("units.view") && (
               <TabsTrigger value="units" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <Package className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Units</span>
                 <span className="xs:hidden">Un</span>
               </TabsTrigger>
             )}
-            {hasPermission("settings.view") && (
+            {canAccess("settings.view") && (
               <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 whitespace-nowrap text-xs sm:text-sm">
                 <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Settings</span>
@@ -306,37 +311,37 @@ export default function AdminDashboard() {
             </TabsList>
           </div>
 
-          {hasPermission("orders.approve") && (
+          {canAccess("orders.approve") && (
             <TabsContent value="approvals">
               <AdminRequestSection />
             </TabsContent>
           )}
 
-          {hasPermission("orders.view") && (
+          {canAccess("orders.view") && (
             <TabsContent value="orders">
               <OrderManager />
             </TabsContent>
           )}
 
-          {hasPermission("categories.view") && (
+          {canAccess("categories.view") && (
             <TabsContent value="categories">
               <CategoryManager />
             </TabsContent>
           )}
 
-          {hasPermission("products.view") && (
+          {canAccess("products.view") && (
             <TabsContent value="products">
               <ProductManager />
             </TabsContent>
           )}
 
-          {hasPermission("slider.view") && (
+          {canAccess("slider.view") && (
             <TabsContent value="slider">
               <SliderManager />
             </TabsContent>
           )}
 
-          {hasPermission("users.view") && (
+          {canAccess("users.view") && (
             <TabsContent value="users">
               <UserManager />
             </TabsContent>
@@ -348,25 +353,25 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
 
-          {hasPermission("database.export") && (
+          {canAccess("database.export") && (
             <TabsContent value="excel">
               <ExcelManager />
             </TabsContent>
           )}
 
-          {hasPermission("database.export") && (
+          {canAccess("database.export") && (
             <TabsContent value="database">
               <DatabaseManager />
             </TabsContent>
           )}
 
-          {hasPermission("units.view") && (
+          {canAccess("units.view") && (
             <TabsContent value="units">
               <UnitsOfMeasureManager />
             </TabsContent>
           )}
 
-          {hasPermission("settings.view") && (
+          {canAccess("settings.view") && (
             <TabsContent value="settings">
               <SiteSettings />
             </TabsContent>
