@@ -53,7 +53,7 @@ module.exports = {
       user: 'ubuntu',
       host: '3.136.95.83',
       ref: 'origin/main',
-      repo: 'git@github.com:your-username/your-repo.git',
+      repo: 'git@github.com:owaisqarnikhan/rc-bayg2.git',
       path: '/home/ubuntu/bayg-ecommerce',
       'pre-deploy-local': '',
       'post-deploy': 'npm install && npm run build && pm2 reload ecosystem.config.js --env production',
