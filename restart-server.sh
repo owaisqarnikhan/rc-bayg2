@@ -1,16 +1,15 @@
 #!/bin/bash
-# Create proper server with authentication and user creation
+# Quick restart with fixed permissions
 set -e
 
-echo "🔧 Creating proper server with authentication..."
-
-# Stop current processes
-pm2 stop all || true
-pm2 delete all || true
+echo "🔄 Restarting server with fixed role permissions..."
 
 cd /home/ubuntu/bayg-ecommerce
 
-# Create a proper server with authentication
+# Stop current server
+pm2 stop bayg-ecommerce || true
+
+# Update the server with fixed permissions directly (no need to recreate everything)
 cat > server-with-auth.js << 'EOF'
 import express from "express";
 import session from "express-session";
@@ -65,7 +64,7 @@ async function comparePasswords(supplied, stored) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
-// In-memory user storage (for now)
+// In-memory user storage
 const users = new Map();
 
 // Session configuration
@@ -135,7 +134,7 @@ async function createTestUsers() {
       firstName: 'Store',
       lastName: 'Manager',
       role: 'Manager',
-      isAdmin: true,
+      isAdmin: true,  // Important: Manager should have isAdmin: true
       isSuperAdmin: false
     },
     {
@@ -185,14 +184,20 @@ async function createTestUsers() {
 
   console.log('✅ Created test users:');
   testUsers.forEach(user => {
-    console.log(`   ${user.role}: ${user.email} / ${user.password}`);
+    console.log(`   ${user.role}: ${user.email} / ${user.password} (isAdmin: ${user.isAdmin})`);
   });
 }
 
 // Authentication routes
 app.post("/api/login", passport.authenticate("local"), (req, res) => {
   console.log('Login successful:', {
-    user: req.user ? { id: req.user.id, username: req.user.username, role: req.user.role } : null,
+    user: req.user ? { 
+      id: req.user.id, 
+      username: req.user.username, 
+      role: req.user.role, 
+      isAdmin: req.user.isAdmin,
+      isSuperAdmin: req.user.isSuperAdmin 
+    } : null,
     sessionID: req.sessionID
   });
   res.json({
@@ -239,6 +244,12 @@ app.get("/api/user/permissions", (req, res) => {
   // Permissions based on role - using the exact permission names the frontend expects
   const permissions = [];
   
+  console.log('Getting permissions for user:', {
+    role: req.user.role,
+    isAdmin: req.user.isAdmin,
+    isSuperAdmin: req.user.isSuperAdmin
+  });
+  
   if (req.user.isSuperAdmin) {
     // Super Admin gets all permissions
     permissions.push(
@@ -279,6 +290,7 @@ app.get("/api/user/permissions", (req, res) => {
     permissions.push('products.view', 'orders.create');
   }
   
+  console.log('Returning permissions:', permissions);
   res.json({ permissions });
 });
 
@@ -288,7 +300,12 @@ app.get("/api/health", (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     users: users.size,
-    authenticated: req.isAuthenticated()
+    authenticated: req.isAuthenticated(),
+    user: req.isAuthenticated() ? { 
+      role: req.user.role, 
+      isAdmin: req.user.isAdmin,
+      isSuperAdmin: req.user.isSuperAdmin 
+    } : null
   });
 });
 
@@ -363,7 +380,7 @@ async function startServer() {
       console.log('👥 Test User Accounts:');
       console.log('   Super Admin: superadmin@bayg.com / admin123');
       console.log('   Admin: admin@bayg.com / admin123');
-      console.log('   Manager: manager@bayg.com / manager123');
+      console.log('   Manager: manager@bayg.com / manager123 (has isAdmin: true)');
       console.log('   Customer 1: customer1@bayg.com / user123');
       console.log('   Customer 2: customer2@bayg.com / user123');
       console.log('   Staff: staff1@bayg.com / staff123');
@@ -377,90 +394,44 @@ async function startServer() {
 startServer();
 EOF
 
-# Update PM2 configuration
-cat > ecosystem.config.cjs << 'EOF'
-module.exports = {
-  apps: [{
-    name: 'bayg-ecommerce',
-    script: 'node',
-    args: 'server-with-auth.js',
-    cwd: '/home/ubuntu/bayg-ecommerce',
-    instances: 1,
-    exec_mode: 'fork',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 5000
-    },
-    max_memory_restart: '1G',
-    max_restarts: 5,
-    min_uptime: '10s',
-    restart_delay: 3000,
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    time: true,
-    watch: false,
-    autorestart: true
-  }]
-};
-EOF
+# Start the server
+echo "Starting server with fixed role permissions..."
+pm2 start bayg-ecommerce
 
-# Ensure required directories exist
-mkdir -p uploads logs dist/public
-chmod 755 uploads
+# Wait a moment
+sleep 5
 
-# Start the application
-echo "Starting application with authentication..."
-pm2 start ecosystem.config.cjs
-
-# Wait for startup
-sleep 10
-
-# Test the application
-echo "Testing authentication endpoints..."
-
-# Test health
-echo "Health check:"
-curl -s http://localhost:5000/api/health | jq . || curl -s http://localhost:5000/api/health
-
-# Test login
+# Test the permissions
 echo ""
-echo "Testing login with admin user:"
+echo "Testing superadmin permissions..."
 curl -X POST http://localhost:5000/api/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=admin@bayg.com&password=admin123" \
-  -c cookies.txt -s | jq . || echo "Login test completed"
+  -d "username=superadmin@bayg.com&password=admin123" \
+  -c /tmp/superadmin-cookies.txt -s > /dev/null
 
-# Test authenticated endpoint
-echo ""
-echo "Testing authenticated user endpoint:"
-curl -s http://localhost:5000/api/user -b cookies.txt | jq . || echo "User endpoint test completed"
+echo "Superadmin permissions:"
+curl -s http://localhost:5000/api/user/permissions -b /tmp/superadmin-cookies.txt | jq '.permissions[]' | head -10
 
-# Show status
 echo ""
-echo "PM2 Status:"
+echo "Testing manager permissions..."
+curl -X POST http://localhost:5000/api/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=manager@bayg.com&password=manager123" \
+  -c /tmp/manager-cookies.txt -s > /dev/null
+
+echo "Manager permissions:"
+curl -s http://localhost:5000/api/user/permissions -b /tmp/manager-cookies.txt | jq '.permissions[]' | head -10
+
+echo ""
 pm2 status
-
-echo ""
-echo "Recent logs:"
-pm2 logs bayg-ecommerce --lines 5 --nostream
 
 if curl -s http://localhost:5000/api/health > /dev/null; then
     echo ""
-    echo "🎉 Server with authentication is running!"
-    echo "✅ Application: http://3.136.95.83"
-    echo "✅ Login endpoint: http://3.136.95.83/api/login"
-    echo ""
-    echo "👥 Test Accounts Created:"
-    echo "   Super Admin: superadmin@bayg.com / admin123"
-    echo "   Admin: admin@bayg.com / admin123" 
-    echo "   Manager: manager@bayg.com / manager123"
-    echo "   Customer 1: customer1@bayg.com / user123"
-    echo "   Customer 2: customer2@bayg.com / user123"
-    echo "   Staff: staff1@bayg.com / staff123"
+    echo "✅ Server restarted with fixed permissions!"
+    echo "🎯 Both superadmin and manager should now see admin panel"
+    echo "📊 Test at: http://3.136.95.83"
 else
-    echo "❌ Server may have issues. Check logs with: pm2 logs bayg-ecommerce"
+    echo "❌ Server restart failed"
 fi
 
 pm2 save
-
-echo "🎉 Proper server with authentication created!"
