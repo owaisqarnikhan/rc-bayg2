@@ -129,12 +129,12 @@ chmod 755 uploads logs
 print_status "Starting application with PM2..."
 
 # Test PM2 configuration
-pm2 start ecosystem.config.js --env production --no-daemon &
+pm2 start ecosystem.config.cjs --env production --no-daemon &
 sleep 5
 pm2 stop bayg-ecommerce || true
 
 # Start normally
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 
 # Test application response

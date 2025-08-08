@@ -90,10 +90,10 @@ This will:
 ### Issue 2: PM2 Configuration Error
 **Error:** `File ecosystem.config.js malformated` or `module is not defined`
 
-**Solution:** The ecosystem.config.js has been updated to use proper CommonJS syntax. If you still see this error:
+**Solution:** The PM2 config has been moved to `ecosystem.config.cjs` to avoid ES module conflicts. Use:
 ```bash
 pm2 delete all
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 ```
 
 ### Issue 3: DATABASE_URL Not Set

@@ -128,7 +128,7 @@ sudo systemctl enable nginx
 
 # Start application with PM2
 print_status "Starting application with PM2..."
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 pm2 startup ubuntu -u ubuntu --hp /home/ubuntu
 
