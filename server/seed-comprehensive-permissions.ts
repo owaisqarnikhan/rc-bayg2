@@ -152,7 +152,7 @@ export async function seedComprehensivePermissions() {
       }
     } else {
       // Assign specific permissions
-      for (const permissionName of managerPermissions as string[]) {
+      for (const permissionName of (managerPermissions as unknown) as string[]) {
         const permissionId = permissionMap.get(permissionName);
         if (permissionId) {
           await db

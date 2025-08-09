@@ -6,7 +6,7 @@ export function requirePermission(permission: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     console.log(`Permission check for ${permission}:`, {
       isAuthenticated: req.isAuthenticated(),
-      user: req.user ? { id: req.user.id, username: req.user.username, role: req.user.role } : null,
+      user: req.user ? { id: req.user.id, username: req.user.username, isAdmin: req.user.isAdmin } : null,
       sessionID: req.sessionID,
       cookies: req.headers.cookie ? 'present' : 'missing'
     });

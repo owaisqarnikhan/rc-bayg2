@@ -39,18 +39,24 @@ import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
-import { pool } from "./db";
 import * as crypto from "crypto";
+import pg from 'pg';
 
 const PostgresSessionStore = connectPg(session);
+const { Pool } = pg;
 
 // Use PostgreSQL session store for production deployment
 import MemoryStore from 'memorystore';
 const MemStore = MemoryStore(session);
 
+// Create proper PostgreSQL connection pool for session store
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
 const sessionStore = process.env.NODE_ENV === 'production' 
   ? new PostgresSessionStore({
-      pool: pool,
+      pool: pgPool,
       tableName: 'session',
       createTableIfMissing: true,
     })

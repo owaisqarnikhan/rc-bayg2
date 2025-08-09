@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
 import { RoleDashboardRouter } from "@/components/RoleDashboardRouter";
+import type { User as UserType, CartItem, Product, Order } from "@shared/schema";
 import { 
   ShoppingCart, 
   Package, 
@@ -28,27 +29,27 @@ export default function UserDashboard() {
   const dashboardRouter = <RoleDashboardRouter />;
 
   // Fetch user data
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user, isLoading: userLoading } = useQuery<UserType>({
     queryKey: ["/api/user"],
   });
 
   // Fetch user's orders
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery<Order[]>({
     queryKey: ["/api/orders"],
   });
 
   // Fetch cart data
-  const { data: cart = [], isLoading: cartLoading } = useQuery({
+  const { data: cart = [], isLoading: cartLoading } = useQuery<(CartItem & { product: Product })[]>({
     queryKey: ["/api/cart"],
   });
 
   // Calculate totals
-  const cartTotal = cart.reduce((sum: number, item: any) => 
-    sum + (parseFloat(item.product?.price || 0) * item.quantity), 0
+  const cartTotal = cart.reduce((sum: number, item: CartItem & { product: Product }) => 
+    sum + (parseFloat(item.product?.price?.toString() || '0') * item.quantity), 0
   );
   
-  const totalSpent = orders.reduce((sum: number, order: any) => 
-    sum + parseFloat(order.totalAmount || 0), 0
+  const totalSpent = orders.reduce((sum: number, order: Order) => 
+    sum + parseFloat(order.total?.toString() || '0'), 0
   );
 
   const recentOrders = orders.slice(0, 3);

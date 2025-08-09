@@ -76,8 +76,12 @@ export function ProductManager() {
         ...data,
         price: data.price || "0",
         // Remove categoryId if it's empty to avoid foreign key constraint
-        categoryId: data.categoryId && data.categoryId.trim() !== "" ? data.categoryId : undefined,
+        ...(data.categoryId && data.categoryId.trim() !== "" && { categoryId: data.categoryId }),
       };
+      // Remove undefined categoryId completely from the object
+      if (!data.categoryId || data.categoryId.trim() === "") {
+        delete cleanData.categoryId;
+      }
       const response = await apiRequest("/api/products", "POST", cleanData);
       return response.json();
     },

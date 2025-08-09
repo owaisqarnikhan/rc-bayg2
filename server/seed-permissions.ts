@@ -7,7 +7,7 @@ import {
   users 
 } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
-import { PERMISSION_MODULES, PERMISSIONS, ROLE_PERMISSIONS } from "./permissions-config";
+import { PERMISSION_MODULES as CONFIG_MODULES, PERMISSIONS as CONFIG_PERMISSIONS, ROLE_PERMISSIONS as CONFIG_ROLE_PERMISSIONS } from "./permissions-config";
 
 // Define all permission modules
 const PERMISSION_MODULES = [
